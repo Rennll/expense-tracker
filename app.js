@@ -11,6 +11,10 @@ app.get('/', (req, res) => {
   res.render('index')
 })
 
+app.get('/records/new', (req, res) => {
+  res.render('edit')
+})
+
 app.listen(PORT, (req, res) => {
   console.log(`This website is running on http://localhost:${PORT}`)
 })
