@@ -1,4 +1,4 @@
-const mongoose = require('mongoose')
+const db = require('../../config/mongoose')
 const Category = require('../category')
 
 const CATEGORY = {
@@ -9,16 +9,12 @@ const CATEGORY = {
   其他: 'https://fontawesome.com/icons/pen?style=solid'
 }
 
-mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true })
-const db = mongoose.connection
-db.on('error', error => console.log(error))
 db.once('open', async () => {
-  console.log('MongoDB is connected.')
-
   let id = 1
   for (const [key, value] of Object.entries(CATEGORY)) {
     await Category.create({ id: id, name: key, icon: value })
     id++
   }
   console.log('Done.')
+  process.exit()
 })
