@@ -11,11 +11,14 @@ router.get('/new', (req, res) => {
 
 router.post('/new', async (req, res) => {
   const { name, date, amount, categoryId } = req.body
+  const category = await Category.findOne({ id: parseInt(categoryId) })
+  let id
 
   try {
-    const category = await Category.findOne({ id: parseInt(categoryId) })
-    const lastRecord = await Record.find().sort({ id: -1 }).limit(1)
-    const id = lastRecord[0].id
+    id = await Record.find().sort({ id: -1 }).limit(1)[0].id
+  } catch {
+    id = 0
+  } finally {
     await Record.create({
       id: id + 1,
       name,
@@ -23,18 +26,36 @@ router.post('/new', async (req, res) => {
       amount,
       categoryId: category._id
     })
-  } catch {
-    const category = await Category.findOne({ id: parseInt(categoryId) })
-    await Record.create({
-      id: 1,
-      name,
-      date,
-      amount,
-      categoryId: category._id
-    })
-  } finally {
     res.redirect('/')
   }
+})
+
+router.get('/:id/edit', async (req, res) => {
+  const _id = req.params.id
+  const record = await Record.findOne({ _id }).lean()
+  const categories = await Category.find().lean()
+  const category = categories.find(category => category._id.equals(record.categoryId))
+
+  let date = record.date.getFullYear() + '-'
+  if (record.date.getMonth() < 10) date += '0'
+  date += record.date.getMonth() + 1 + '-'
+  if (record.date.getDate() < 10) date += '0'
+  date += record.date.getDate()
+
+  res.render('edit', { record, category, categories, date })
+})
+
+router.post('/:id/edit', async (req, res) => {
+  const _id = req.params.id
+  const { name, date, amount, categoryId } = req.body
+  const category = await Category.findOne({ id: parseInt(categoryId) })
+
+  await Record.findOneAndUpdate({ _id }, {
+    name,
+    date,
+    amount,
+    categoryId: category._id
+  }, { useFindAndModify: false }, res.redirect('/'))
 })
 
 module.exports = router

@@ -1,12 +1,12 @@
 <div class="container" style="max-width:600px">  
   <h2>請{{#if record}}修改{{else}}輸入{{/if}}你的支出</h2>
-  <form class="mt-3" action="/records/new" method="post">
+  <form class="mt-3" action="/records/{{#if record}}{{ record._id }}/edit{{else}}new{{/if}}" method="post">
     <div class="row mb-4 g-3 align-items-center">
       <div class="col-auto">
         <label for="name" class="form-label">名稱：</label>
       </div>
       <div class="col-auto">
-        <input type="text" class="form-control" id="name" name="name" value="{{ name }}">
+        <input type="text" class="form-control" id="name" name="name" value="{{ record.name }}">
       </div>      
     </div>
     <div class="row mb-4 g-3 align-items-center">
@@ -22,8 +22,8 @@
         類別：
       </div>
       <div class="col-auto">
-        <select class="form-select" aria-label="Select category" name="categoryId">
-          <option selected>Select</option>
+        <select class="form-select" aria-label="Select category" name="categoryId" value="{{ categoryId }}">
+          <option {{#if category}} value="{{ category.id }}">{{ category.name }}{{else}}selected>Select{{/if}}</option>
           {{#each categories}}
           <option value="{{ this.id }}">{{ this.name }}</option>
           {{/each}}
@@ -35,7 +35,7 @@
         <label for="amount" class="form-label">金額：</label>
       </div>
       <div class="col-auto">
-        <input type="text" class="form-control" id="amount" name="amount" value="{{ amount }}">
+        <input type="text" class="form-control" id="amount" name="amount" value="{{ record.amount }}">
       </div>      
     </div>
     <button type="submit" class="btn btn-primary">{{#if record}}送出{{else}}新增支出{{/if}}</button>
