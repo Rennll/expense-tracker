@@ -1,8 +1,23 @@
 const express = require('express')
 const router = express()
+const Record = require('../../models/record')
+const Category = require('../../models/category')
 
-router.get('/', (req, res) => {
-  res.render('index')
+router.get('/', async (req, res) => {
+  const categories = await Category.find().lean()
+  const records = await Record.find().lean()
+  let totalAmount = 0
+
+  records.forEach(record => {
+    categories.forEach(category => {
+      if (record.categoryId.equals(category._id)) {
+        const iconImg = 'fa-' + category.icon.split('/').slice(-1)[0].replace('?style=', ' fa-')
+        Object.assign(record, { icon: iconImg })
+      }
+    })
+    totalAmount += record.amount
+  })
+  res.render('index', { categories, records, totalAmount })
 })
 
 module.exports = router
