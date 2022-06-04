@@ -12,23 +12,18 @@ router.get('/new', (req, res) => {
 router.post('/new', async (req, res) => {
   const { name, date, amount, categoryId } = req.body
   const category = await Category.findOne({ id: parseInt(categoryId) })
-  let id
+  let id = 0
 
-  try {
-    const lastRecord = await Record.find().sort({ id: -1 }).limit(1)
-    id = lastRecord[0].id
-  } catch {
-    id = 0
-  } finally {
-    await Record.create({
-      id: id + 1,
-      name,
-      date,
-      amount,
-      categoryId: category._id
-    })
-    res.redirect('/')
-  }
+  const lastRecord = await Record.find().sort({ id: -1 }).limit(1)
+  if (lastRecord.length) id = lastRecord[0].id
+  await Record.create({
+    id: id + 1,
+    name,
+    date,
+    amount,
+    categoryId: category._id
+  })
+  res.redirect('/')
 })
 
 router.get('/:id/edit', async (req, res) => {

@@ -5,7 +5,13 @@ const Category = require('../../models/category')
 
 router.get('/', async (req, res) => {
   const categories = await Category.find().lean()
-  const records = await Record.find().lean()
+  const filteredCategory = categories.find(category => category.id === parseInt(req.query.category))
+  const records = []
+  if (filteredCategory) {
+    records.push(...await Record.find({ categoryId: filteredCategory._id }).lean())
+  } else {
+    records.push(...await Record.find().lean())
+  }
   let totalAmount = 0
 
   records.forEach(record => {
