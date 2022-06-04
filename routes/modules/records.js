@@ -15,7 +15,8 @@ router.post('/new', async (req, res) => {
   let id
 
   try {
-    id = await Record.find().sort({ id: -1 }).limit(1)[0].id
+    const lastRecord = await Record.find().sort({ id: -1 }).limit(1)
+    id = lastRecord[0].id
   } catch {
     id = 0
   } finally {
@@ -56,6 +57,12 @@ router.post('/:id/edit', async (req, res) => {
     amount,
     categoryId: category._id
   }, { useFindAndModify: false }, res.redirect('/'))
+})
+
+router.post('/:id/delete', async (req, res) => {
+  const _id = req.params.id
+
+  await Record.findOneAndDelete({ _id }, { useFindAndModify: false }, res.redirect('/'))
 })
 
 module.exports = router
