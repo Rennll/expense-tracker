@@ -21,6 +21,14 @@ router.get('/', async (req, res) => {
         Object.assign(record, { icon: iconImg })
       }
     })
+
+    let date = record.date.getFullYear() + '-'
+    if (record.date.getMonth() < 10) date += '0'
+    date += record.date.getMonth() + 1 + '-'
+    if (record.date.getDate() < 10) date += '0'
+    date += record.date.getDate()
+    record.date = date
+
     totalAmount += record.amount
   })
   res.render('index', { categories, records, totalAmount })
