@@ -30,7 +30,7 @@
           <a href="./records/{{ this._id }}/edit">修改</a>                   
         </div>
         <div class="col">
-          <form action="./records/{{ this._id }}/delete" method="post">
+          <form action="./records/{{ this._id }}?_method=DELETE" method="POST">
             <button type="submit" class="btn btn-primary">刪除</button>
           </form>
         </div>
