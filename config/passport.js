@@ -6,11 +6,11 @@ module.exports = app => {
   app.use(passport.initialize())
   app.use(passport.session())
 
-  passport.use(new LocalStrategy({ usernameField: 'email' },
-    (email, password, done) => {
-      User.findOne({ email })
+  passport.use(new LocalStrategy({ usernameField: 'email', passReqToCallback: true },
+    (req, email, password, done) => {
+      User.find({ email })
         .then(user => {
-          if (!user) {
+          if (!user.length) {
             return done(null, false, { message: 'That email is not registered!' })
           }
           if (user.password !== password) {

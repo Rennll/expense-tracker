@@ -1,6 +1,7 @@
 <div class="container" style="max-width: 400px;">
   <h1 class="text-center">Login</h1>
   <form action="/users/login" method="POST">
+    {{> message}}
     <div class="mb-3">
       <label for="email" class="form-label">Email</label>
       <input type="text" name="email" class="form-control" id="email" placeholder="Enter Email" required>

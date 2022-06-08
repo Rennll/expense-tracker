@@ -10,7 +10,8 @@ router.get('/login', (req, res) => {
 
 router.post('/login', passport.authenticate('local', {
   successRedirect: '/',
-  failureRedirect: '/users/login'
+  failureRedirect: '/users/login',
+  failureFlash: true
 }))
 
 router.get('/register', (req, res) => {
@@ -20,12 +21,16 @@ router.get('/register', (req, res) => {
 router.post('/register', async (req, res) => {
   const { name, email, password, confirmedPassword } = req.body
   const repeatedEmail = await User.find({ email })
+  const errors = []
 
   if (repeatedEmail.length) {
-    return res.render('register', { name, email, password, confirmedPassword })
+    errors.push({ message: 'Email already registered.' })
   }
   if (password !== confirmedPassword) {
-    return res.render('register', { name, email, password, confirmedPassword })
+    errors.push({ message: 'Password and confirm password does not match.' })
+  }
+  if (errors.length) {
+    return res.render('register', { name, email, password, confirmedPassword, errors })
   }
 
   let id = 0
@@ -42,6 +47,7 @@ router.post('/register', async (req, res) => {
 })
 
 router.get('/logout', (req, res) => {
+  req.flash('success_msg', '已成功登出')
   req.logout()
   res.redirect('/users/login')
 })
