@@ -6,6 +6,7 @@ const session = require('express-session')
 require('./config/mongoose')
 const routes = require('./routes/')
 const usePassport = require('./config/passport')
+const res = require('express/lib/response')
 
 const PORT = 3000
 
@@ -21,6 +22,11 @@ app.use(session({
   saveUninitialized: true
 }))
 usePassport(app)
+app.use((req, res, next) => {
+  res.locals.isAuthenticated = req.isAuthenticated()
+  res.locals.user = req.user
+  next()
+})
 
 app.use(routes)
 
