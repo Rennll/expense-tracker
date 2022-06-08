@@ -5,6 +5,7 @@ const session = require('express-session')
 
 require('./config/mongoose')
 const routes = require('./routes/')
+const usePassport = require('./config/passport')
 
 const PORT = 3000
 
@@ -19,6 +20,7 @@ app.use(session({
   resave: false,
   saveUninitialized: true
 }))
+usePassport(app)
 
 app.use(routes)
 
