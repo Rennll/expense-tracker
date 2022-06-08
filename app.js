@@ -6,7 +6,6 @@ const session = require('express-session')
 require('./config/mongoose')
 const routes = require('./routes/')
 const usePassport = require('./config/passport')
-const res = require('express/lib/response')
 
 const PORT = 3000
 

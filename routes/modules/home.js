@@ -4,13 +4,14 @@ const Record = require('../../models/record')
 const Category = require('../../models/category')
 
 router.get('/', async (req, res) => {
+  const userId = req.user._id
   const categories = await Category.find().lean()
   const filteredCategory = categories.find(category => category.id === parseInt(req.query.category))
   const records = []
   if (filteredCategory) {
-    records.push(...await Record.find({ categoryId: filteredCategory._id }).lean())
+    records.push(...await Record.find({ categoryId: filteredCategory._id, userId }).lean())
   } else {
-    records.push(...await Record.find().lean())
+    records.push(...await Record.find({ userId }).lean())
   }
   let totalAmount = 0
 

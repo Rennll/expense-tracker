@@ -10,6 +10,7 @@ router.get('/new', (req, res) => {
 })
 
 router.post('/new', async (req, res) => {
+  const userId = req.user._id
   const { name, date, amount, categoryId } = req.body
   const category = await Category.findOne({ id: parseInt(categoryId) })
   let id = 0
@@ -21,14 +22,16 @@ router.post('/new', async (req, res) => {
     name,
     date,
     amount,
-    categoryId: category._id
+    categoryId: category._id,
+    userId
   })
   res.redirect('/')
 })
 
 router.get('/:id/edit', async (req, res) => {
+  const userId = req.user._id
   const _id = req.params.id
-  const record = await Record.findOne({ _id }).lean()
+  const record = await Record.findOne({ _id, userId }).lean()
   const categories = await Category.find().lean()
   const category = categories.find(category => category._id.equals(record.categoryId))
 
@@ -42,11 +45,12 @@ router.get('/:id/edit', async (req, res) => {
 })
 
 router.put('/:id', async (req, res) => {
+  const userId = req.user._id
   const _id = req.params.id
   const { name, date, amount, categoryId } = req.body
   const category = await Category.findOne({ id: parseInt(categoryId) })
 
-  await Record.findOneAndUpdate({ _id }, {
+  await Record.findOneAndUpdate({ _id, userId }, {
     name,
     date,
     amount,
@@ -55,9 +59,10 @@ router.put('/:id', async (req, res) => {
 })
 
 router.delete('/:id', async (req, res) => {
+  const userId = req.user._id
   const _id = req.params.id
 
-  await Record.findOneAndDelete({ _id }, { useFindAndModify: false }, res.redirect('/'))
+  await Record.findOneAndDelete({ _id, userId }, { useFindAndModify: false }, res.redirect('/'))
 })
 
 module.exports = router
